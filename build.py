@@ -49,6 +49,7 @@ def debug_list_dir(label: str, p: Path):
 windows = platform.platform().startswith('Windows')
 osx = platform.platform().startswith('Darwin') or platform.platform().startswith("macOS")
 
+APP_NAME = "OFARCH"
 APP_EXE  = APP_NAME + ("DESK.exe" if windows else "DESK")  # macOS: binario "OFARCHDESK" (sin .exe)
 DIST_DIR = Path("dist/macos").resolve() if osx else Path("dist/win").resolve()
 exe_path = Path("target/release") / APP_EXE
