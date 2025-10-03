@@ -5,16 +5,39 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
-      - name: Install toolchain
+        with:
+          python-version: '3.11'
+
+      - name: Toolchain (Rust + deps)
         run: |
-          brew install cmake nasm ninja pkg-config
+          brew update
+          brew install cmake nasm ninja pkg-config curl
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - name: Build macOS .dmg
+
+      # 👉 vcpkg para deps C/C++
+      - name: Install vcpkg + required libs
         run: |
-          python3 build.py
+          git clone https://github.com/microsoft/vcpkg "$HOME/vcpkg"
+          pushd "$HOME/vcpkg"
+          ./bootstrap-vcpkg.sh -disableMetrics
+          # triplet para Intel macOS
+          ./vcpkg install libvpx libyuv opus aom --triplet x64-osx
+          popd
+          echo "VCPKG_ROOT=$HOME/vcpkg" >> $GITHUB_ENV
+          echo "VCPKG_DEFAULT_TRIPLET=x64-osx" >> $GITHUB_ENV
+
+      - name: Python deps for portable generator
+        run: |
+          cd libs/portable
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+
+      - name: Build DMG
+        run: python3 build.py
+
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
