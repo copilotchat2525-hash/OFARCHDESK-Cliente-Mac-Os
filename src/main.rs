@@ -6,9 +6,21 @@ use librustdesk::*;
 fn main() {
 
     println!("================ LOADING SCITER DLLL ==================");
-    let bytes = std::include_bytes!("..\\sciter.dll"); //since main.rs is in rustdesk/src, we need to go up one level (to rustdesk)
-    std::fs::write("sciter.dll", bytes.as_slice());
+    // En Windows: opcionalmente incrusta el sciter.dll para soltarlo al lado del .exe
+    #[cfg(target_os = "windows")]
+    static SCITER_DLL_BYTES: &[u8] = include_bytes!("../sciter.dll");
 
+    // En macOS y otros: NO incrustamos nada; libsciter.dylib irá dentro del .app
+    #[cfg(not(target_os = "windows"))]
+    static SCITER_DLL_BYTES: &[u8] = &[];
+    
+    #[cfg(target_os = "windows")]
+    {
+        use std::fs;
+        fs::write("sciter.dll", SCITER_DLL_BYTES)
+            .expect("no se pudo escribir sciter.dll");
+    }   
+    
     if !common::global_init() {
         eprintln!("Global initialization failed.");
         return;
@@ -27,9 +39,21 @@ fn main() {
 fn main() {
 
     println!("================ LOADING SCITER DLLL ==================");
-    let bytes = std::include_bytes!("..\\sciter.dll"); //since main.rs is in rustdesk/src, we need to go up one level (to rustdesk)
-    std::fs::write("sciter.dll", bytes.as_slice());
-    
+    // En Windows: opcionalmente incrusta el sciter.dll para soltarlo al lado del .exe
+    #[cfg(target_os = "windows")]
+    static SCITER_DLL_BYTES: &[u8] = include_bytes!("../sciter.dll");
+
+    // En macOS y otros: NO incrustamos nada; libsciter.dylib irá dentro del .app
+    #[cfg(not(target_os = "windows"))]
+    static SCITER_DLL_BYTES: &[u8] = &[];
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::fs;
+        fs::write("sciter.dll", SCITER_DLL_BYTES)
+            .expect("no se pudo escribir sciter.dll");
+    }    
+
     if !common::global_init() {
         return;
     }
@@ -47,9 +71,21 @@ fn main() {
 fn main() {
 
         println!("================ LOADING SCITER DLLL ==================");
-    let bytes = std::include_bytes!("..\\sciter.dll"); //since main.rs is in rustdesk/src, we need to go up one level (to rustdesk)
-    std::fs::write("sciter.dll", bytes.as_slice());
+    // En Windows: opcionalmente incrusta el sciter.dll para soltarlo al lado del .exe
+    #[cfg(target_os = "windows")]
+    static SCITER_DLL_BYTES: &[u8] = include_bytes!("../sciter.dll");
+
+    // En macOS y otros: NO incrustamos nada; libsciter.dylib irá dentro del .app
+    #[cfg(not(target_os = "windows"))]
+    static SCITER_DLL_BYTES: &[u8] = &[];
     
+    #[cfg(target_os = "windows")]
+    {
+        use std::fs;
+        fs::write("sciter.dll", SCITER_DLL_BYTES)
+            .expect("no se pudo escribir sciter.dll");
+    }  
+
     if !common::global_init() {
         return;
     }
